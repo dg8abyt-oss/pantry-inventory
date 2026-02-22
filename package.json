@@ -1,0 +1,17 @@
+{
+  "name": "pantry-inventory",
+  "version": "1.0.0",
+  "description": "A simple pantry inventory management application",
+  "main": "index.html",
+  "scripts": {
+    "start": "vercel dev",
+    "build": "vercel build",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^28.0.0"
+  }
+}
