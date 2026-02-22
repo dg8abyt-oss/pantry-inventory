@@ -26,14 +26,14 @@ module.exports = async (req, res) => {
 
       res.status(200).json(data);
     } else if (req.method === 'POST') {
-      if (req.body.name && req.body.quantity && req.body.category) {
+      if (req.body.name && req.body.quantity && req.body.notes) {
         const { data, error } = await supabase
           .from('inventory')
           .insert([
             {
               name: req.body.name,
               quantity: req.body.quantity,
-              category: req.body.category
+              notes: req.body.notes
             }
           ]);
 
@@ -44,13 +44,13 @@ module.exports = async (req, res) => {
         res.status(400).json({ error: 'Missing required fields' });
       }
     } else if (req.method === 'PUT') {
-      if (req.body.id && req.body.name && req.body.quantity && req.body.category) {
+      if (req.body.id && req.body.name && req.body.quantity && req.body.notes) {
         const { data, error } = await supabase
           .from('inventory')
           .update({
             name: req.body.name,
             quantity: req.body.quantity,
-            category: req.body.category
+            notes: req.body.notes
           })
           .eq('id', req.body.id);
 

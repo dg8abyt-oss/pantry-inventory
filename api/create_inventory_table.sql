@@ -2,6 +2,6 @@ CREATE TABLE inventory (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   quantity INTEGER NOT NULL,
-  category TEXT NOT NULL,
+  notes TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
