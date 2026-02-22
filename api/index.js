@@ -77,12 +77,12 @@ module.exports = async (req, res) => {
       res.status(200).send(buffer);
     } else if (req.method === 'POST') {
       // Handle POST request to convert favicon.svg to PNG
-      const svgPath = './favicon.svg';
+      const svgUrl = 'https://raw.githubusercontent.com/dg8abyt-oss/pantry-inventory/442f9bdca07449740222931fa0490ee606b18356/favicon.svg';
       const pngPath = './favicon.png';
 
       try {
-        // Load the SVG file
-        const svg = await loadImage(svgPath);
+        // Load the SVG file from URL
+        const svg = await loadImage(svgUrl);
 
         // Create a canvas with the same dimensions as the SVG
         const canvas = createCanvas(svg.width, svg.height);
