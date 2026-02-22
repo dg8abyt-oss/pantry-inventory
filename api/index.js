@@ -1,6 +1,4 @@
 const { createClient } = require('@supabase/supabase-js');
-const { createCanvas, loadImage } = require('canvas');
-const fs = require('fs');
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
@@ -26,86 +24,54 @@ module.exports = async (req, res) => {
 
       if (error) throw error;
 
-      // Create a canvas
-      const canvas = createCanvas(800, 600);
-      const ctx = canvas.getContext('2d');
-
-      // Set background color
-      ctx.fillStyle = '#f3f4f6';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Set text properties
-      ctx.fillStyle = '#1f2937';
-      ctx.font = '24px Arial';
-      ctx.textAlign = 'center';
-
-      // Add title
-      ctx.fillText('Pantry Inventory', canvas.width / 2, 40);
-
-      // Set table properties
-      const tableX = 50;
-      const tableY = 80;
-      const rowHeight = 40;
-      const colWidth = 200;
-
-      // Draw table headers
-      ctx.font = 'bold 16px Arial';
-      ctx.fillText('Name', tableX + colWidth / 2, tableY + rowHeight / 2);
-      ctx.fillText('Quantity', tableX + colWidth * 1.5, tableY + rowHeight / 2);
-      ctx.fillText('Category', tableX + colWidth * 2.5, tableY + rowHeight / 2);
-
-      // Draw table rows
-      ctx.font = '14px Arial';
-      data.forEach((item, index) => {
-        const y = tableY + (index + 1) * rowHeight;
-        ctx.fillText(item.name, tableX + colWidth / 2, y + rowHeight / 2);
-        ctx.fillText(item.quantity.toString(), tableX + colWidth * 1.5, y + rowHeight / 2);
-        ctx.fillText(item.category, tableX + colWidth * 2.5, y + rowHeight / 2);
-      });
-
-      // Convert canvas to PNG
-      const buffer = canvas.toBuffer('image/png');
-
-      // Save PNG to a file
-      fs.writeFileSync('inventory.png', buffer);
-
-      // Set response headers
-      res.setHeader('Content-Type', 'image/png');
-      res.setHeader('Content-Disposition', 'attachment; filename=inventory.png');
-
-      // Send the PNG file
-      res.status(200).send(buffer);
+      res.status(200).json(data);
     } else if (req.method === 'POST') {
-      // Handle POST request to convert favicon.svg to PNG
-      const svgUrl = 'https://raw.githubusercontent.com/dg8abyt-oss/pantry-inventory/442f9bdca07449740222931fa0490ee606b18356/favicon.svg';
-      const pngPath = './favicon.png';
+      if (req.body.name && req.body.quantity && req.body.category) {
+        const { data, error } = await supabase
+          .from('inventory')
+          .insert([
+            {
+              name: req.body.name,
+              quantity: req.body.quantity,
+              category: req.body.category
+            }
+          ]);
 
-      try {
-        // Load the SVG file from URL
-        const svg = await loadImage(svgUrl);
+        if (error) throw error;
 
-        // Create a canvas with the same dimensions as the SVG
-        const canvas = createCanvas(svg.width, svg.height);
-        const ctx = canvas.getContext('2d');
+        res.status(201).json(data);
+      } else {
+        res.status(400).json({ error: 'Missing required fields' });
+      }
+    } else if (req.method === 'PUT') {
+      if (req.body.id && req.body.name && req.body.quantity && req.body.category) {
+        const { data, error } = await supabase
+          .from('inventory')
+          .update({
+            name: req.body.name,
+            quantity: req.body.quantity,
+            category: req.body.category
+          })
+          .eq('id', req.body.id);
 
-        // Draw the SVG on the canvas
-        ctx.drawImage(svg, 0, 0, svg.width, svg.height);
+        if (error) throw error;
 
-        // Convert canvas to PNG
-        const buffer = canvas.toBuffer('image/png');
+        res.status(200).json(data);
+      } else {
+        res.status(400).json({ error: 'Missing required fields' });
+      }
+    } else if (req.method === 'DELETE') {
+      if (req.body.id) {
+        const { data, error } = await supabase
+          .from('inventory')
+          .delete()
+          .eq('id', req.body.id);
 
-        // Save PNG to a file
-        fs.writeFileSync(pngPath, buffer);
+        if (error) throw error;
 
-        // Set response headers
-        res.setHeader('Content-Type', 'image/png');
-        res.setHeader('Content-Disposition', 'attachment; filename=favicon.png');
-
-        // Send the PNG file
-        res.status(200).send(buffer);
-      } catch (error) {
-        console.error('Error converting SVG to PNG:', error);
-        res.status(500).json({ error: 'Failed to convert SVG to PNG' });
+        res.status(200).json(data);
+      } else {
+        res.status(400).json({ error: 'Missing item ID' });
       }
     } else {
       res.status(405).json({ error: 'Method not allowed' });

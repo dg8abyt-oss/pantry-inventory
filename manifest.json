@@ -7,13 +7,13 @@
   "theme_color": "#4F46E5",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/dg8abyt-oss/pantry-inventory/442f9bdca07449740222931fa0490ee606b18356/favicon.svg",
+      "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "https://raw.githubusercontent.com/dg8abyt-oss/pantry-inventory/442f9bdca07449740222931fa0490ee606b18356/favicon.svg",
+      "src": "/favicon.svg",
       "sizes": "180x180",
       "type": "image/svg+xml"
     }
